@@ -25,7 +25,7 @@ URLS = np.array([["https://raw.githubusercontent.com/mitchellkrogza/Phishing.Dat
 
 
 q = 0
-file_name = "PhishingCSV.csv"
+file_name = "SiteList.csv"
 with open(file_name, 'w', newline='') as file:
     writer = csv.writer(file)
 
@@ -36,17 +36,22 @@ with open(file_name, 'w', newline='') as file:
 	    	for line in site: 
 	    		q += 1
     			url = line.decode("utf-8")
-    			writer.writerow([url, URLS[i][1]])
+    			url = url.replace("\n" , '') # if there is a \n at the end , remove it
+    			if(len(url)>0):
+    				writer.writerow([url, URLS[i][1]])
     	else: 
     		with open(URLS[i][0], encoding='UTF-8') as site:
     			for line in site: 
     				q += 1
-    				url = line # bytes(line, 'utf-8').decode("utf-8")
-    				writer.writerow([url, URLS[i][1]])
+    				url = line
+    				url = url.replace("\n" , '') # if there is a \n at the end , remove it
+    				if(len(url)>0):
+	    				writer.writerow([url, URLS[i][1]])
 
 df = pd.read_csv(file_name)
-l1  = df.shape
+l1  = df.shape[0]
 df.drop_duplicates(subset=None, inplace=True)
-l2 = df.shape)
+l2 = df.shape
 df.to_csv(file_name, index=False)
-print("Removed " + str(l2 - l1) + " duplicates")
+print("Removed " + str(l1 - l2[0]) + " duplicates")
+print(l2)
