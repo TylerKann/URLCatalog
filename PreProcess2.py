@@ -97,6 +97,7 @@ for i in range(len(urls)):
 		print(f"urls kept: {j}")
 	if i % 10000 == 0: 
 		newDF.to_csv(output_file, index = False) 
+		print("Backup Complete")
 	url = urls[i] 
 	dates =	registered_and_date(url) # first we try who-is 
 	if (len(dates) == 1): # 1 output means we got a failure 
@@ -108,7 +109,7 @@ for i in range(len(urls)):
 	urlData = url_data(url) # getting meta data of the url (character breakdown) 
 
 	finalOutput = np.concatenate(([urlData, dates, A, cert, [df.iloc[i,1]]])) # this adds on the Y value that we ultimately want to predict 
-	newDF.append(finalOutput.tolist())
+	newDF = newDF.append([finalOutput.tolist()])
 	j += 1
 
 print("New Data Looks like") 
