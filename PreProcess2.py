@@ -4,6 +4,7 @@ from urllib.request import urlopen
 import pandas as pd
 import whois # pip install python-whois
 import dns.resolver
+import datetime
 
 serverPort = "443"
 
@@ -32,7 +33,6 @@ newData = []
 COLS = ['Num'] + ['Inception', 'Expiration', 'Updated', 'Name Servers', 'Auth Servers', 'SSL Cert'] + list(key for key in AlphaNum.keys()) + ['Site Type']
 print(COLS)
 newDF = pd.DataFrame(columns = COLS)
- 
 
 def registered_and_date(domain_name):
     """
@@ -48,18 +48,25 @@ def registered_and_date(domain_name):
         # we want when the site was created
         if not ((w.creation_date) and (w.name_servers) and (w.expiration_date) and (w.updated_date)): 
         	return [0] 
+
         if type(w.creation_date) == list: 
         	inception = w.creation_date[0].year
-        else: 
+        elif isinstance(w.creation_date, datetime.date): 
         	inception = w.creation_date.year
+        else: 
+        	return [0]
         if type(w.expiration_date) == list: 
         	expiration = w.expiration_date[0].year
-        else: 
+        elif isinstance(w.expiration_date, datetime.date): 
         	expiration = w.expiration_date.year 
+        else: 
+        	return [0]
         if type(w.updated_date) == list: 
         	update = w.updated_date[0].year
-        else: 
+        elif isinstance(w.updated_date, datetime.date): 
         	update = w.updated_date.year 
+        else: 
+        	return [0]
         if type(w.name_servers) == list: 
         	servers = len(w.name_servers)
         else: 
@@ -106,7 +113,7 @@ for i in range(len(urls)):
 	if i % 100 == 0:
 		print(f"urls processed: {i}")
 		print(f"urls kept: {j}")
-	if i % 20 == 0: 
+	if i % 10000 == 0: 
 		newDF.to_csv(output_file, index = False) 
 		print("Backup Complete")
 	url = urls[i] 
