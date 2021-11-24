@@ -19,6 +19,8 @@ AlphaNum = {'a': 0, 'b': 0, 'c': 0, 'd':0, 'e':0, 'f':0, 'g': 0, 'h': 0, 'i':0, 
 
 urls = df.iloc[:,0] # grab all the URLS (0th column all rows)
 newData = []
+
+newDF = pd.DataFrame()
 certs = np.zeros((1, len(urls)))
 
  
@@ -93,6 +95,8 @@ for i in range(len(urls)):
 	if i % 100 == 0:
 		print(f"urls processed: {i}")
 		print(f"urls kept: {j}")
+	if i % 10000 == 0: 
+		newDF.to_csv(output_file, index = False) 
 	url = urls[i] 
 	dates =	registered_and_date(url) # first we try who-is 
 	if (len(dates) == 1): # 1 output means we got a failure 
@@ -104,7 +108,7 @@ for i in range(len(urls)):
 	urlData = url_data(url) # getting meta data of the url (character breakdown) 
 
 	finalOutput = np.concatenate(([urlData, dates, A, cert, [df.iloc[i,1]]])) # this adds on the Y value that we ultimately want to predict 
-	newData.append(finalOutput)
+	newDF.append(finalOutput.tolist())
 	j += 1
 
 print("New Data Looks like") 
